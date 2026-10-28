@@ -16,7 +16,21 @@ Application de réservation de places de parking (projet CNAM). Un utilisateur e
 
 ## Conventions
 - Le backend est la source de vérité du contrat d'API. Le frontend s'aligne sur lui, jamais l'inverse.
-- Langue de l'interface : français. Code, identifiants et commits : conventionnels (`feat:`, `fix:`, `chore:`, `rework:`).
+- Langue de l'interface : français. Code et identifiants en anglais.
+- Commits : [Conventional Commits](https://www.conventionalcommits.org) + [gitmoji](https://gitmoji.dev) en **shortcode**, sous la forme
+  `type(scope optionnel): :gitmoji: sujet à l'impératif, en anglais, sans point final`
+  (ex. `fix: :bug: await SaveChanges in ReservationRepository`). Un commit = un changement cohérent.
+  Types autorisés : `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert` (pas de `rework`).
+
+  | Type | Gitmoji | Type | Gitmoji |
+  |---|---|---|---|
+  | `feat` | `:sparkles:` | `test` | `:white_check_mark:` |
+  | `fix` | `:bug:` (`:lock:` si sécurité) | `chore` | `:wrench:` |
+  | `docs` | `:memo:` | `ci` | `:construction_worker:` |
+  | `refactor` | `:recycle:` | `build` | `:package:` |
+  | `style` | `:art:` | `perf` | `:zap:` |
+
+  Autres utiles : `:card_file_box:` (base/migrations), `:fire:` (suppression), `:arrow_up:` (dépendances), `:boom:` (changement incompatible).
 - Une branche par fonctionnalité (`feature/<n>-<nom>`), PR vers `main`. La CI (`.github/workflows/dotnet.yml`) build et teste le backend.
 - Ne jamais committer de secret ni de base de données.
 
