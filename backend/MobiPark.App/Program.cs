@@ -24,6 +24,7 @@ builder.Services.AddTransient<IParkingService, ParkingService>();
 builder.Services.AddTransient<IParkingRepository, ParkingRepository>();
 builder.Services.AddTransient<IVehicleRepository, VehicleRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
 builder.Services.AddTransient<IHash, ArgonHash>();
 builder.Services.AddTransient<IClock, Clock>();
 var app = builder.Build();

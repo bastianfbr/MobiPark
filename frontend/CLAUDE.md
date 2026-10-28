@@ -1,0 +1,45 @@
+# Frontend MobiPark
+
+Nuxt 4 + TypeScript (strict) + Nuxt UI 4 (Tailwind CSS 4). **SPA** (`ssr: false`) : l'application est derrière un login et le
+backend renvoie le JWT dans un header de réponse, pas dans un cookie. Gestionnaire de paquets : **pnpm 9.1.4** (épinglé dans `packageManager`).
+
+## Commandes (depuis `frontend/`)
+```bash
+pnpm install
+pnpm dev            # http://localhost:3000, /api relayé vers http://localhost:5000/api (backend à lancer en parallèle)
+pnpm lint
+pnpm typecheck
+pnpm build
+```
+Avant de terminer une tâche : `pnpm lint && pnpm typecheck`. La CI (`.github/workflows/frontend.yml`) exécute lint, typecheck et build.
+
+## Structure (`app/`, convention Nuxt 4)
+- `pages/` : routes (fichiers = URL). `layouts/` : coquilles de page (sidebar utilisateur, sidebar admin). `middleware/` : gardes de route.
+- `components/` : composants réutilisables (auto-importés). `composables/` : `useXxx` (auto-importés).
+- `assets/css/main.css` : thème Tailwind. La couleur de marque est `brand` (500 = `#4B5FD0`, indigo de la maquette), déclarée comme `primary` dans `app/app.config.ts`.
+- Composants UI : ceux de Nuxt UI (`UButton`, `UInput`, `UTable`, `UForm`…), pas de CSS maison quand un composant existe. Icônes : `i-lucide-*`.
+- Typer toutes les réponses d'API dans `app/types/` ; aucun `any`.
+
+## Parler au backend
+- Toujours des chemins relatifs `/api/...` (jamais d'URL absolue) : le proxy de dev les relaie. En production, un reverse proxy doit faire de même.
+- Le backend est la source de vérité du contrat : voir le tableau d'API dans `backend/CLAUDE.md`. JSON en camelCase, enums en chaînes (`Car`, `Motorcycle`, `Thermal`, `Electrical`).
+- Auth : après `POST /api/Auth` ou `/api/Auth/register`, lire le header de réponse `Authorization` (`Bearer <jwt>`), le garder (cookie via `useCookie` pour survivre au rechargement), puis l'envoyer sur chaque requête.
+- Erreurs : le backend renvoie `{ "error": "..." }`. 403 sans body = non connecté, 404 = ressource inexistante **ou appartenant à un autre utilisateur**.
+
+## Routes (`app/pages/`)
+`/connexion` (login/inscription, sans layout) · `/reserver` → `/reserver/place` · `/reservations` · `/vehicules` · `/admin` · `/admin/plan`.
+Layouts : `default` (utilisateur) et `admin`. Garde globale `middleware/auth.global.ts` : sans cookie `mobipark_token`, redirection vers `/connexion`.
+Composants clés : `ParkingPlan` (plan des 26 places, `interactive` pour l'admin), `StatusBadge` (badges contrastés, préférer à `UBadge`), `AppSidebar`.
+
+## Maquette à reproduire
+Maquette publiée dans Claude : https://claude.ai/artifact/GWHjU8KVQWk2xGZNbznyco (7 écrans, tous reconstruits).
+Navigation utilisateur : Réserver / Mes réservations / Mes véhicules. Le plan compte 26 places (1–6, 7–12, 13–18, 19–26), dont 4 électriques (5, 6, 25, 26).
+Interface en français. Accessibilité : textes à 4.5:1 minimum, `aria-label` sur les boutons-icônes, vraies balises `button`/`a`.
+
+## Données réelles vs démonstration
+Réel (API) : connexion/inscription, véhicules (liste + création), réservations (liste).
+Démonstration, isolée dans `app/utils/demo.ts` et signalée à l'écran par un bandeau « démonstration » : plan et attribution de la place,
+tableau de bord et plan administrateur. À remplacer quand le backend exposera : `POST /api/Reservation` (avec choix automatique de la place
+et prix), le rôle administrateur, les statistiques.
+Écarts avec le backend actuel : pas de champ « modèle » sur un véhicule (seulement la marque), pas de montant dans la liste des réservations,
+et une seule réservation possible par véhicule (relation 1–1 dans `ApplicationDbContext`).

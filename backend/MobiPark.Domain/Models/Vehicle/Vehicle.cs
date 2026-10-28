@@ -15,6 +15,7 @@ public abstract class Vehicle
         Engine = engine;
     }
 
+    public int OwnerId { get; set; }
     public string Maker { get; set; }
     public AbstractLicensePlate LicensePlate { get; init; }
     public Engine.Engine Engine { get; set; }
