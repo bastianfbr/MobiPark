@@ -26,13 +26,20 @@ Avant de terminer une tâche : `pnpm lint && pnpm typecheck`. La CI (`.github/wo
 - Auth : après `POST /api/Auth` ou `/api/Auth/register`, lire le header de réponse `Authorization` (`Bearer <jwt>`), le garder (cookie via `useCookie` pour survivre au rechargement), puis l'envoyer sur chaque requête.
 - Erreurs : le backend renvoie `{ "error": "..." }`. 403 sans body = non connecté, 404 = ressource inexistante **ou appartenant à un autre utilisateur**.
 
-## Maquette à reproduire
-7 écrans (maquette publiée dans Claude : https://claude.ai/artifact/GWHjU8KVQWk2xGZNbznyco) :
-connexion ; utilisateur : Réserver, Place réservée (plan en lecture seule), Mes réservations, Mes véhicules ;
-admin : Tableau de bord, Plan interactif (clic sur une place → détail à droite).
-Navigation utilisateur : Réserver / Mes réservations / Mes véhicules. Le plan compte 26 places (1–6, 7–12, 13–18, 19–26), dont 4 électriques (5, 6, 25, 26).
-Interface en français.
+## Routes (`app/pages/`)
+`/connexion` (login/inscription, sans layout) · `/reserver` → `/reserver/place` · `/reservations` · `/vehicules` · `/admin` · `/admin/plan`.
+Layouts : `default` (utilisateur) et `admin`. Garde globale `middleware/auth.global.ts` : sans cookie `mobipark_token`, redirection vers `/connexion`.
+Composants clés : `ParkingPlan` (plan des 26 places, `interactive` pour l'admin), `StatusBadge` (badges contrastés, préférer à `UBadge`), `AppSidebar`.
 
-## Pas encore côté backend (ne pas inventer côté front)
-Rôle administrateur, statistiques du tableau de bord, `POST /api/Reservation`, capacité de batterie à la création d'un véhicule électrique.
-Tant que ces routes n'existent pas, ces écrans restent sur des données de démonstration clairement isolées dans un composable.
+## Maquette à reproduire
+Maquette publiée dans Claude : https://claude.ai/artifact/GWHjU8KVQWk2xGZNbznyco (7 écrans, tous reconstruits).
+Navigation utilisateur : Réserver / Mes réservations / Mes véhicules. Le plan compte 26 places (1–6, 7–12, 13–18, 19–26), dont 4 électriques (5, 6, 25, 26).
+Interface en français. Accessibilité : textes à 4.5:1 minimum, `aria-label` sur les boutons-icônes, vraies balises `button`/`a`.
+
+## Données réelles vs démonstration
+Réel (API) : connexion/inscription, véhicules (liste + création), réservations (liste).
+Démonstration, isolée dans `app/utils/demo.ts` et signalée à l'écran par un bandeau « démonstration » : plan et attribution de la place,
+tableau de bord et plan administrateur. À remplacer quand le backend exposera : `POST /api/Reservation` (avec choix automatique de la place
+et prix), le rôle administrateur, les statistiques.
+Écarts avec le backend actuel : pas de champ « modèle » sur un véhicule (seulement la marque), pas de montant dans la liste des réservations,
+et une seule réservation possible par véhicule (relation 1–1 dans `ApplicationDbContext`).
