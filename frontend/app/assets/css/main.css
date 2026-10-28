@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Indigo de la maquette MobiPark (#4B5FD0 en 500) */
+  --color-brand-50: #F0F2FD;
+  --color-brand-100: #E8EBFC;
+  --color-brand-200: #CBD1F7;
+  --color-brand-300: #A5AFF0;
+  --color-brand-400: #7886E2;
+  --color-brand-500: #4B5FD0;
+  --color-brand-600: #3A4DBE;
+  --color-brand-700: #2F40A8;
+  --color-brand-800: #273489;
+  --color-brand-900: #222C6E;
+  --color-brand-950: #151A44;
+}
