@@ -14,6 +14,11 @@ public class ReservationRepository : IReservationRepository
         return reservation;
     }
 
+    public List<Reservation> GetReservationsByOwner(int ownerId)
+    {
+        return _reservations.Where(r => r.Vehicle.OwnerId == ownerId).ToList();
+    }
+
     public Reservation FindByPlate(string plate)
     {
         throw new NotImplementedException();

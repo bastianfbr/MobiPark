@@ -30,6 +30,7 @@ public class VehicleEntity
 
     public VehicleEntity(Vehicle vehicle)
     {
+        OwnerId = vehicle.OwnerId;
         Maker = vehicle.Maker;
         Plate = vehicle.LicensePlate.Value;
         PlateType = vehicle.LicensePlate is FrLicensePlate ? LicensePlateType.FR : LicensePlateType.DE;
@@ -48,6 +49,7 @@ public class VehicleEntity
         VehicleType = vehicle is Car ? VehicleType.Car : VehicleType.Motorcycle;
     }
 
+    public int OwnerId { get; set; }
     public string Plate { get; set; }
     public LicensePlateType PlateType { get; set; }
     public string Maker { get; set; }
@@ -71,8 +73,10 @@ public class VehicleEntity
         else
             engine = new ElectricalEngine(BatteryCapacity, CurrentBatteryCapacity);
 
-        if (VehicleType == VehicleType.Car)
-            return new Car(Maker, plate, engine);
-        return new Motorcycle(Maker, plate, engine);
+        Vehicle vehicle = VehicleType == VehicleType.Car
+            ? new Car(Maker, plate, engine)
+            : new Motorcycle(Maker, plate, engine);
+        vehicle.OwnerId = OwnerId;
+        return vehicle;
     }
 }

@@ -14,14 +14,21 @@ public class ReservationEntity
         VehicleId = reservation.Vehicle.LicensePlate.Value;
         Vehicle = new VehicleEntity(reservation.Vehicle);
         ParkingSpace = reservation.ParkingSpace;
+        StartTime = reservation.ReservationStartTime;
+        EndTime = reservation.ReservationEndTime;
     }
     public int ReservationId { get; set; }
     public string VehicleId { get; set; }
     public VehicleEntity Vehicle { get; set; }
     public ParkingSpace ParkingSpace { get; set; }
-    
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+
     public Reservation ToDomainModel()
     {
-        return new Reservation(Vehicle.ToDomainModel(), ParkingSpace, DateTime.Now, DateTime.Now);
+        return new Reservation(Vehicle.ToDomainModel(), ParkingSpace, StartTime, EndTime)
+        {
+            ReservationId = ReservationId
+        };
     }
 }
